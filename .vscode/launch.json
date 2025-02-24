@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "karyawan",
+            "cwd": "karyawan",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "karyawan (profile mode)",
+            "cwd": "karyawan",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "karyawan (release mode)",
+            "cwd": "karyawan",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "nfc_reader",
+            "cwd": "nfc_reader",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "nfc_reader (profile mode)",
+            "cwd": "nfc_reader",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "nfc_reader (release mode)",
+            "cwd": "nfc_reader",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
