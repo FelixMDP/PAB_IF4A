@@ -5,16 +5,16 @@ class ApiService {
   static const String apiKey = '7d8e18a52e73f8a58f367e9731c85e99';
   static const String baseUrl = 'https://api.themoviedb.org/3';
 
+  /// Mengambil semua film dari daftar populer dan tren
   Future<List<Map<String, dynamic>>> getAllMovies() async {
-    try {
-      final List<Map<String, dynamic>> popularMovies = await getPopularMovies();
-      final List<Map<String, dynamic>> nowPlayingMovies =
-          await getNowPlayingMovies();
+    final response =
+        await http.get(Uri.parse('$baseUrl/movie/now_playing?api_key=$apiKey'));
 
-      // Menggabungkan kedua daftar film menjadi satu
-      return [...popularMovies, ...nowPlayingMovies];
-    } catch (e) {
-      throw Exception('Failed to load all movies: $e');
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data['results']);
+    } else {
+      throw Exception('Failed to load movies: ${response.statusCode}');
     }
   }
 
@@ -31,17 +31,16 @@ class ApiService {
     }
   }
 
-  /// Mendapatkan daftar film yang baru tayang (now playing) dari TMDb
-  Future<List<Map<String, dynamic>>> getNowPlayingMovies() async {
-    final response =
-        await http.get(Uri.parse('$baseUrl/movie/now_playing?api_key=$apiKey'));
+  /// Mendapatkan daftar film yang sedang tren dari TMDb
+  Future<List<Map<String, dynamic>>> getTrendingMovies() async {
+    final response = await http
+        .get(Uri.parse('$baseUrl/trending/movie/week?api_key=$apiKey'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       return List<Map<String, dynamic>>.from(data['results']);
     } else {
-      throw Exception(
-          'Failed to load now playing movies: ${response.statusCode}');
+      throw Exception('Failed to load trending movies: ${response.statusCode}');
     }
   }
 }
