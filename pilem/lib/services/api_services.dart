@@ -43,4 +43,16 @@ class ApiService {
       throw Exception('Failed to load trending movies: ${response.statusCode}');
     }
   }
+
+  Future<List<Map<String, dynamic>>> searchMovies(String query) async {
+    final response = await http
+        .get(Uri.parse('$baseUrl/search/movie?query=$query&api_key=$apiKey'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return List<Map<String, dynamic>>.from(data['results']);
+    } else {
+      throw Exception('Failed to load search movies: ${response.statusCode}');
+    }
+  }
 }
