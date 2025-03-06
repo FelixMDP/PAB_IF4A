@@ -1,10 +1,54 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends StatefulWidget {
   final Movie movie;
 
   const DetailScreen({super.key, required this.movie});
+
+  @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  bool _isFavorite = false;
+
+  Future<void> _checkIsFavorite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isFavorite = prefs.containsKey('movie_${widget.movie.id}');
+    });
+  }
+
+  Future<void> _toogleFavourite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isFavorite = !_isFavorite;
+    });
+    if (_isFavorite) {
+      final String movieJson = jsonEncode(widget.movie.toJson());
+      prefs.setString('movie_${widget.movie.id}', movieJson);
+      List<String> favoriteMovieIds =
+          prefs.getStringList('favoriteMovies') ?? [];
+      favoriteMovieIds.add(widget.movie.id.toString());
+      prefs.setStringList('favoriteMovies', favoriteMovieIds);
+    } else {
+      prefs.remove('movie_${widget.movie.id}');
+      List<String> favoriteMovieIds =
+          prefs.getStringList('favoriteMovies') ?? [];
+      favoriteMovieIds.remove(widget.movie.id.toString());
+      prefs.setStringList('favoriteMovies', favoriteMovieIds);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIsFavorite();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +58,7 @@ class DetailScreen extends StatelessWidget {
           // Background Poster dengan efek blur
           Positioned.fill(
             child: Image.network(
-              'https://image.tmdb.org/t/p/w500${movie.backdropPath}',
+              'https://image.tmdb.org/t/p/w500${widget.movie.backdropPath}',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) =>
                   Container(color: Colors.black),
@@ -35,11 +79,11 @@ class DetailScreen extends StatelessWidget {
                 SafeArea(
                   child: Center(
                     child: Hero(
-                      tag: 'movie_${movie.id}',
+                      tag: 'movie_${widget.movie.id}',
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Image.network(
-                          'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                          'https://image.tmdb.org/t/p/w500${widget.movie.posterPath}',
                           width: 200,
                           height: 300,
                           fit: BoxFit.cover,
@@ -72,7 +116,7 @@ class DetailScreen extends StatelessWidget {
                     children: [
                       // Judul Film
                       Text(
-                        movie.title,
+                        widget.movie.title,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -92,13 +136,13 @@ class DetailScreen extends StatelessWidget {
                                   color: Colors.yellow, size: 20),
                               const SizedBox(width: 5),
                               Text(
-                                movie.voteAverage.toString(),
+                                widget.movie.voteAverage.toString(),
                                 style: const TextStyle(color: Colors.white),
                               ),
                             ],
                           ),
                           Text(
-                            "Release: ${movie.releaseDate}",
+                            "Release: ${widget.movie.releaseDate}",
                             style: const TextStyle(color: Colors.white70),
                           ),
                         ],
@@ -108,8 +152,8 @@ class DetailScreen extends StatelessWidget {
 
                       // Deskripsi Film
                       Text(
-                        movie.overview.isNotEmpty
-                            ? movie.overview
+                        widget.movie.overview.isNotEmpty
+                            ? widget.movie.overview
                             : "No description available.",
                         style: const TextStyle(
                             color: Colors.white70, fontSize: 16),
