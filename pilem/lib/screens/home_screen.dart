@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
 import 'package:pilem/screens/detail_screen.dart';
@@ -87,21 +88,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
-                                child: Image.network(
-                                  'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      'https://image.tmdb.org/t/p/w500/${movie.posterPath}',
                                   width: 150,
                                   height: 200,
                                   fit: BoxFit.cover,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(Icons.broken_image,
-                                        size: 100);
-                                  },
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(
+                                        color: Colors.blue),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
                                 ),
                               ),
                             ),

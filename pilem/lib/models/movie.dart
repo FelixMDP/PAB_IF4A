@@ -23,7 +23,7 @@ class Movie {
       posterPath: json['poster_path'] ?? '',
       backdropPath: json['backdrop_path'] ?? '',
       releaseDate: json['release_date'] ?? '',
-      voteAverage: (json['vote_average'] ?? '0.0').toDouble(),
+      voteAverage: json['vote_average'] ?? '0.0',
     );
   }
   Map<String, dynamic> toJson() {

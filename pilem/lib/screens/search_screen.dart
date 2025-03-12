@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
 import 'package:pilem/screens/detail_screen.dart';
@@ -13,7 +14,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final ApiService _apiService = ApiService();
   final TextEditingController _searchController = TextEditingController();
-  List<Movie> _SearchResult = [];
+  List<Movie> _searchResult = [];
 
   @override
   void initState() {
@@ -30,14 +31,14 @@ class _SearchScreenState extends State<SearchScreen> {
   void _searchMovies() async {
     if (_searchController.text.isEmpty) {
       setState(() {
-        _SearchResult.clear();
+        _searchResult.clear();
       });
       return;
     }
     final List<Map<String, dynamic>> searchData =
         await _apiService.searchMovies(_searchController.text);
     setState(() {
-      _SearchResult = searchData.map((e) => Movie.fromJson(e)).toList();
+      _searchResult = searchData.map((e) => Movie.fromJson(e)).toList();
     });
   }
 
@@ -65,7 +66,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   Expanded(
                     child: TextField(
                       controller: _searchController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Search Movies....',
                         border: InputBorder.none,
                       ),
@@ -74,47 +75,49 @@ class _SearchScreenState extends State<SearchScreen> {
                   Visibility(
                     visible: _searchController.text.isNotEmpty,
                     child: IconButton(
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _searchController.clear();
-                          });
-                        },
-                        icon: const Icon(Icons.clear)),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.clear),
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: Expanded(
-                child: ListView.builder(
-                  itemCount: _SearchResult.length,
-                  itemBuilder: (context, index) {
-                    final Movie movie = _SearchResult[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        leading: Image.network(
-                            movie.posterPath != ''
-                                ? 'https://image.tmdb.org/t/p/w500/${movie.posterPath}'
-                                : 'https://placehold.co/50x75?text=No+Image',
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover),
-                        title: Text(movie.title),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailScreen(movie: movie),
-                            ),
-                          );
-                        },
+              child: ListView.builder(
+                itemCount: _searchResult.length,
+                itemBuilder: (context, index) {
+                  final Movie movie = _searchResult[index];
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      leading: CachedNetworkImage(
+                        imageUrl:
+                            'https://image.tmdb.org/t/p/w500/${movie.posterPath}',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(color: Colors.blue),
+                        ),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
-                    );
-                  },
-                ),
+                      title: Text(movie.title),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreen(movie: movie),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ),
           ],
