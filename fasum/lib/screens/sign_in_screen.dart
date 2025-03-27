@@ -34,6 +34,13 @@ class _SignInScreenState extends State<SignInScreen> {
                     labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
+                ),
+                TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(),
+                  ),
                   obscureText: true,
                 ),
                 const SizedBox(

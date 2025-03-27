@@ -32,24 +32,56 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
+                ),
+                TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: "Password",
+                    border: OutlineInputBorder(),
+                  ),
                   obscureText: true,
                 ),
                 const SizedBox(
                   height: 16,
                 ),
                 ElevatedButton(
-                    onPressed: () async {
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(
-                          email: _emailController.text,
-                          password: _passwordController.text);
+                  onPressed: () async {
+                    try {
+                      await FirebaseAuth.instance
+                          .createUserWithEmailAndPassword(
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text.trim(),
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Sign up successful!")),
+                      );
+
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => const SignInScreen(),
                         ),
                       );
-                    },
-                    child: const Text('Sign Out')),
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Error: ${e.toString()}")),
+                      );
+                    }
+                  },
+                  child: const Text('Sign up'),
+                ),
                 const SizedBox(height: 32),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignInScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text("Already have an account? Sign in"),
+                ),
               ],
             ),
           )),
