@@ -1,6 +1,6 @@
 name: fasum
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -16,6 +16,7 @@ dependencies:
   geolocator: ^14.0.0
   cloud_firestore: ^5.6.6
   intl: ^0.20.2
+  cupertino_icons: ^1.0.8
 dev_dependencies:
   flutter_test:
     sdk: flutter
