@@ -1,0 +1,2 @@
+D:/Felix_Pab/PAB_IF4A/fasum/android/app/.cxx/Debug/f606y5p2/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/Felix_Pab/PAB_IF4A/fasum/android/app/.cxx/Debug/f606y5p2/armeabi-v7a/CMakeFiles/rebuild_cache.dir
