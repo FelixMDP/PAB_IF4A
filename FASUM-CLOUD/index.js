@@ -1,34 +1,60 @@
 const express = require("express");
 const admin = require("firebase-admin");
-const bodyParser = require("body-parser");
-const serviceAccount = require("./serviceAccountKey.json");
 const cors = require("cors");
-require("dotenv/config");
+const path = require("path");
+require("dotenv").config();
+
+const app = express();
+
+// ✅ Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ✅ Load service account from .env
+const serviceAccountPath = path.resolve(
+  __dirname,
+  process.env.SERVICE_ACCOUNT_KEY
+);
+
+let serviceAccount;
+try {
+  serviceAccount = require(serviceAccountPath);
+} catch (error) {
+  console.error("❌ Gagal memuat service account key:", error.message);
+  process.exit(1); // Hentikan server jika gagal
+}
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
-const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cors());
 
-app.post("send-notification", async (req, res) => {
-  const { token, title, body, senderName, senderPhotourl } = req.body;
+// ✅ Test route
+app.get("/", (req, res) => {
+  res.send("✅ Fasum Cloud server is running!");
+});
 
-  if (!token || !title || !body) {
-    return res.status(400).json("token, title, body wajib diisi");
+// ✅ POST /send-to-topic route
+app.post("/send-to-topic", async (req, res) => {
+  const { topic, title, body, senderName, senderPhotoUrl } = req.body;
+
+  if (!topic || !title || !body) {
+    return res
+      .status(400)
+      .json({ error: "topic, title, and body are required." });
   }
+
   const message = {
+    topic,
     notification: {
-      title: title,
-      body: body,
+      title,
+      body,
     },
     data: {
-      title: title || "Notification Baru",
-      body: body || "Anda memiliki notification Baru",
+      title,
+      body,
       senderName: senderName || "Admin",
-      senderPhotourl: senderPhotourl || "",
+      senderPhotoUrl: senderPhotoUrl || "",
       sendAt: new Date().toISOString(),
       messageType: "topic-notification",
     },
@@ -36,26 +62,30 @@ app.post("send-notification", async (req, res) => {
       priority: "high",
     },
     apns: {
-      Headers: {
+      headers: {
         "apns-priority": "10",
       },
     },
   };
+
   try {
     const response = await admin.messaging().send(message);
     res.status(200).json({
       success: true,
-      message: `Notification berhasil dikirim ke topic '$(topic)`,
-      response: response,
+      message: `✅ Notifikasi berhasil dikirim ke topic '${topic}'`,
+      response,
     });
   } catch (error) {
+    console.error("❌ Error saat mengirim notifikasi:", error);
     res.status(500).json({
       success: false,
       error: error.message,
     });
   }
 });
-const PORT = process.env.PORT;
+
+// ✅ Start server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Server running on ${PORT}");
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
