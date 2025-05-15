@@ -186,7 +186,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
         );
         return;
       }
-
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
