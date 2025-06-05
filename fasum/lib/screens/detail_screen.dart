@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:fasum/l10n/app_localizations.dart';
 import 'package:fasum/screens/full_image_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -40,7 +40,7 @@ class _DetailScreenState extends State<DetailScreen> {
     if (!mounted) return;
     if (!success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tidak bisa membuka Google Maps')),
+        SnackBar(content: Text(AppLocalizations.of(context).cannotOpenGoogleMaps ?? 'Cannot open Google Maps')),
       );
     }
   }
@@ -52,7 +52,7 @@ class _DetailScreenState extends State<DetailScreen> {
     ).format(widget.createdAt);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Detail Laporan')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context).detailReport.toString())),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +83,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                       );
                     },
-                    tooltip: 'Lihat gambar penuh',
+                    tooltip: AppLocalizations.of(context).viewFullImage,
                     style: IconButton.styleFrom(
                       backgroundColor: Colors.black45,
                     ),
@@ -113,7 +113,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  widget.category,
+                                  AppLocalizations.of(context).category ?? 'Category',
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -131,7 +131,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  createdAtFormatted,
+                                   AppLocalizations.of(context).time.toString(),
                                   style: const TextStyle(fontSize: 14),
                                 ),
                               ],
@@ -147,13 +147,13 @@ class _DetailScreenState extends State<DetailScreen> {
                           size: 38,
                           color: Colors.lightGreen,
                         ),
-                        tooltip: "Buka di Google Maps",
+                        tooltip: AppLocalizations.of(context).openInGoogleMaps,
                       ),
                     ],
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    widget.description,
+                    AppLocalizations.of(context).description.toString(),
                     style: const TextStyle(fontSize: 16),
                   ),
                 ],

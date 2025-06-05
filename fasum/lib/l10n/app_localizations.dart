@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations_en.dart';
 import 'app_localizations_id.dart';
 
@@ -526,6 +525,16 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Indonesia'**
   String get indonesian;
+
+  String? get cannotOpenGoogleMaps => null;
+
+  String? get category => null;
+
+  String? get time => null;
+
+  String? get description => null;
+
+  String? get detailReport => null;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
