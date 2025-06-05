@@ -6,6 +6,8 @@ import 'package:fasum/screens/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'settings_screen.dart';
+import '../l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,25 +19,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String? selectedCategory;
 
-  List<String> categories = [
-    'Jalan Rusak',
-    'Marka Pudar',
-    'Lampu Mati',
-    'Trotoar Rusak',
-    'Rambu Rusak',
-    'Jembatan Rusak',
-    'Sampah Menumpuk',
-    'Saluran Tersumbat',
-    'Sungai Tercemar',
-    'Sampah Sungai',
-    'Pohon Tumbang',
-    'Taman Rusak',
-    'Fasilitas Rusak',
-    'Pipa Bocor',
-    'Vandalisme',
-    'Banjir',
-    'Lainnya',
-  ];
+  List<String> getCategories(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    return [
+      loc.categoryJalanRusak,
+      loc.categoryMarkaPudar,
+      loc.categoryLampuMati,
+      loc.categoryTrotoarRusak,
+      loc.categoryRambuRusak,
+      loc.categoryJembatanRusak,
+      loc.categorySampahMenumpuk,
+      loc.categorySaluranTersumbat,
+      loc.categorySungaiTercemar,
+      loc.categorySampahSungai,
+      loc.categoryPohonTumbang,
+      loc.categoryTamanRusak,
+      loc.categoryFasilitasRusak,
+      loc.categoryPipaBocor,
+      loc.categoryVandalisme,
+      loc.categoryBanjir,
+      loc.categoryLainnya,
+    ];
+  }
 
   String formatTime(DateTime dateTime) {
     final now = DateTime.now();
@@ -64,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showCategoryFilter() async {
+    final categories = getCategories(context);
     final result = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -79,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.clear),
-                  title: const Text('Semua Kategori'),
+                  title: Text(AppLocalizations.of(context).allCategories),
                   onTap: () => Navigator.pop(
                     context,
                     null,
@@ -138,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             onPressed: _showCategoryFilter,
             icon: const Icon(Icons.filter_list),
-            tooltip: 'Filter Kategori',
+            tooltip: AppLocalizations.of(context).filterCategory,
           ),
           IconButton(
             onPressed: () {
@@ -146,6 +152,13 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             icon: const Icon(Icons.logout),
           ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => SettingsScreen()),
+            ),
+          )
         ],
       ),
       body: RefreshIndicator(
@@ -163,13 +176,15 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             final posts = snapshot.data!.docs.where((doc) {
               final data = doc.data();
-              final category = data['category'] ?? 'Lainnya';
+              final category = data['category'] ??
+                  AppLocalizations.of(context).categoryLainnya;
               return selectedCategory == null || selectedCategory == category;
             }).toList();
 
             if (posts.isEmpty) {
-              return const Center(
-                child: Text("Tidak ada laporan untuk kategori ini."),
+              return Center(
+                child:
+                    Text(AppLocalizations.of(context).noReportsInThisCategory),
               );
             }
 
@@ -184,7 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 final fullName = data['fullName'] ?? 'Anonim';
                 final latitude = data['latitude'];
                 final longitude = data['longitude'];
-                final category = data['category'] ?? 'Lainnya';
+                final category = data['category'] ??
+                    AppLocalizations.of(context).categoryLainnya;
                 final createdAt = DateTime.parse(createdAtStr);
                 String heroTag =
                     'fasum-image-${createdAt.millisecondsSinceEpoch}';

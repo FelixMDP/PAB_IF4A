@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fasum/l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -91,7 +92,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Failed to compress image: $e')));
+        ).showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context)
+                .failedToCompressImage(e.toString()))));
       }
     }
   }
